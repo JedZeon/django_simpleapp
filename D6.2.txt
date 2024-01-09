@@ -1,0 +1,94 @@
+Создаём виртуальное окружение venv
+python -m venv venv
+Активируем его.
+venv\scripts\activate
+
+pip install django
+После установки Django создаём пустой проект:
+django-admin startproject project
+cd project
+(Или после создания нового проекта разместить файлы как удобно)
+
+Проверка работы сервера
+python manage.py runserver
+
+Применяем миграции
+python manage.py migrate
+
+Создаём суперпользователя
+python manage.py createsuperuser
+admin
+admin
+
+подключаем ещё приложения в project\settings.py
+INSTALLED_APPS
+    # подключаем ещё приложения
+    'django.contrib.sites',
+    'django.contrib.flatpages',
+
+Обязательно после блока INSTALLED_APPS добавить
+SITE_ID = 1
+
+MIDDLEWARE
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+
+Добавим ссылку на темплайны в блоке TEMPLATES
+'DIRS': [os.path.join(BASE_DIR, 'templates')],
+
+
+Добавляем в project\urls.py
+ссылки на наши странички (ко всем страничкам доступ будет автоматический, но чтобы они работали нужно добавить их сюда)
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('pages/', include('django.contrib.flatpages.urls')),
+]
+
+Применяем миграции
+python manage.py migrate
+
+http://127.0.0.1:8000/admin
+Flat pages - статичные страницы
+    URL — адрес нашей странички, # /about/
+    title — название, которое будет во вкладке браузера, # Пример названия страничнки
+    content — HTML-код, который будет отображаться на страничке,
+
+Контроль просмотра страниц только зарегистрированным пользователям
+Создадим файл fpages/admin.py (см в папке)
+Добавим приложение 'fpages' в настройки INSTALLED_APPS
+
+//--------------------------- Добавляем стили
+достаточно в любом поиске написать запрос «bootstrap free templates»
+Выбрать, скачать
+
+settings
+И в настройках добавить строчку в самом конце, для подгрузки стилей из папки static
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
+//-------------------------------------------------------------------------------------
+
+
+
+python manage.py startapp simpleapp
+
+
+мы можем использовать дженерик ListView для вывода списка товаров:
+
+Создаем свой класс, который наследуется от ListView.
+Указываем модель, из которой будем выводить данные.
+Указываем поле сортировки данных модели (необязательно).
+Записываем название шаблона.
+Объявляем, как хотим назвать переменную в шаблоне.
+
+simpleapp/views.py
+
+настроим адрес, чтобы любой пользователь нашего приложения мог ознакомиться с товарами
+Создадим файл urls.py
+
+Создать суперюзера
+python manage.py createsuperuser
+admin
+admin
