@@ -1,7 +1,7 @@
-Создаём виртуальное окружение venv
-python -m venv venv
-Активируем его.
-venv\scripts\activate
+#Создаём виртуальное окружение venv
+#python -m venv venv
+#Активируем его.
+#venv\scripts\activate
 
 pip install django
 После установки Django создаём пустой проект:
@@ -70,25 +70,50 @@ STATICFILES_DIRS = [
 ]
 //-------------------------------------------------------------------------------------
 
-
-
+D6.2
 python manage.py startapp simpleapp
 
 
 мы можем использовать дженерик ListView для вывода списка товаров:
-
+simpleapp/views.py
 Создаем свой класс, который наследуется от ListView.
 Указываем модель, из которой будем выводить данные.
 Указываем поле сортировки данных модели (необязательно).
 Записываем название шаблона.
 Объявляем, как хотим назвать переменную в шаблоне.
 
-simpleapp/views.py
-
 настроим адрес, чтобы любой пользователь нашего приложения мог ознакомиться с товарами
-Создадим файл urls.py
+Создадим файл simpleapp/urls.py и заполним его (см.файл)
 
-Создать суперюзера
-python manage.py createsuperuser
-admin
-admin
+мы уже подключали flatpages и сделать так, чтобы он автоматически включал все наши адреса из приложения и добавлял к нему префикс products
+project/urls.py (см. файл)
+path('products/', include('simpleapp.urls')),
+
+settings.py
+INSTALLED_APPS
+'simpleapp'
+
+Создадим в папке templates шаблон products.html
+
+simpleapp/views.py и добавим в него представление ProductDetail
+
+project/simpleapp/urls.py добавляем ссылку ProductDetail
+
+Добавим новый шаблон, в котором мы будем выводить отдельный товар
+project/templates/product.html
+
+
+Добавим категорий и продуктов, чтобы хоть чтото было
+
+python manage.py shell
+from simpleapp.models import Product, Category
+Category.objects.create(name='Гигиена')
+Category.objects.create(name='Уход за полостью рта')
+Category.objects.create(name='Зубные щётки')
+
+Product.objects.create(name='Зубные щётки CURAPROX 5460 Ultrasoft', description='В комплекте 3 щетки CURAPROX 5460 Ultra Soft разного цвета.', quantity=100, price=1771, category_id=1)
+Product.objects.create(name='Зубная щетка Biorepair CURVE Protezione Totale Medium', description='ервая зубная щётка средней жесткости на рынке профессионального ухода за полостью рта на основе microRepair', quantity=100, price=374, category_id=1)
+Product.objects.create(name='Мочалка', description='Моет и ладно.', quantity=78, price=300, category_id=1)
+
+добавим новый шаблон, в котором мы будем выводить отдельный товар
+project/templates/product.html
