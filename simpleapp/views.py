@@ -27,7 +27,9 @@ class ProductsList(ListView):
         # В ответе мы должны получить словарь.
         context = super().get_context_data(**kwargs)
         # К словарю добавим текущую дату в ключ 'time_now'.
-        context['time_now'] = datetime.utcnow()
+        # context['time_now'] = datetime.utcnow()
+        # Ввели ТЭГ в simpleapp/templatetags/custom_tags.py, current_time, отключаем за не надобностью time_now
+
         # context['next_sale'] = None
         context['next_sale'] = "Распродажа в среду!" # Произвольное значение произвольной переменной
 
