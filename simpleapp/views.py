@@ -1,6 +1,10 @@
 # Импортируем класс, который говорит нам о том,
 # что в этом представлении мы будем выводить список объектов из БД
+from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
+from django.shortcuts import render
+
+from .forms import ProductForm
 from .models import Product
 # from datetime import datetime
 from .filters import ProductFilter
@@ -41,3 +45,16 @@ class ProductDetail(DetailView):
     template_name = 'product.html'  # Используем другой шаблон — product.html
     context_object_name = 'product' # Название объекта, в котором будет выбранный пользователем продукт
     pk_url_kwarg = 'id'             # Просто чтобы в urls, указать не pk а id
+
+
+def create_product(request):
+    form = ProductForm()
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/products/')
+
+
+    return render(request, 'product_edit.html', {'form': form})

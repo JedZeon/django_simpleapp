@@ -1,0 +1,3 @@
+Создадим файл в forms.py в нашем приложении simpleapp
+
+simpleapp/forms.py
