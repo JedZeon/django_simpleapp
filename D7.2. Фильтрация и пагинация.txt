@@ -1,0 +1,64 @@
+D7.2. Фильтрация и пагинация
+
+views.py
+paginate_by = 2  # вот так мы можем указать количество записей на странице
+
+templates/products.html
+//-------------
+{# Добавляем пагинацию на страницу #}
+
+   {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+//-------------
+page_obj — это объект, в котором содержится информация о текущей странице:
+В page_obj мы имеем доступ к следующим переменным:
+has_previous — существует ли предыдущая страница;
+previous_page_number — номер предыдущей страницы;
+number — номер текущей страницы;
+has_next — существует ли следующая страница;
+next_page_number — номер следующей страницы;
+paginator.num_pages — объект paginator содержит информацию о количестве страниц в переменной num_pages.
+
+
+************ Фильтрация ****************
+
+python -m pip install django-filter
+Документация https://pypi.org/project/django-filter/
+
+Добавим ‘django_filters’ в INSTALLED_APPS
+
+создать файл filters.py в директории simpleapp/ (см. файл)
+
+созданный нами класс нужно использовать в представлении (view) для фильтрации списка товаров
+simpleapp/views.py (см.файл)
+
+templates/products.html
+
+Для сохранения выбранной фильтрации добавим тэг в
+simpleapp/templatetags/custom_tags.py
+//-------
+@register.simple_tag(takes_context=True)
+def url_replace(context, **kwargs):
+   d = context['request'].GET.copy()
+   for k, v in kwargs.items():
+       d[k] = v
+   return d.urlencode()
+//-------
