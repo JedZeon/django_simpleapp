@@ -1,12 +1,8 @@
-# Импортируем класс, который говорит нам о том,
-# что в этом представлении мы будем выводить список объектов из БД
-from django.http import HttpResponseRedirect
-from django.views.generic import ListView, DetailView
-from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import ProductForm
 from .models import Product
-# from datetime import datetime
 from .filters import ProductFilter
 
 
@@ -33,7 +29,7 @@ class ProductsList(ListView):
     # который будет передан в шаблон.
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['next_sale'] = "Распродажа в среду!" # Произвольное значение произвольной переменной
+        context['next_sale'] = "Распродажа в среду!"  # Произвольное значение произвольной переменной
 
         # Добавляем в контекст объект фильтрации
         context['filterset'] = self.filterset
@@ -41,20 +37,32 @@ class ProductsList(ListView):
 
 
 class ProductDetail(DetailView):
-    model = Product                 # Модель всё та же, но мы хотим получать информацию по отдельному товару
+    model = Product  # Модель всё та же, но мы хотим получать информацию по отдельному товару
     template_name = 'product.html'  # Используем другой шаблон — product.html
-    context_object_name = 'product' # Название объекта, в котором будет выбранный пользователем продукт
-    pk_url_kwarg = 'id'             # Просто чтобы в urls, указать не pk а id
+    context_object_name = 'product'  # Название объекта, в котором будет выбранный пользователем продукт
+    pk_url_kwarg = 'id'  # Просто чтобы в urls, указать не pk а id
 
 
-def create_product(request):
-    form = ProductForm()
+# Добавляем новое представление для создания товаров.
+class ProductCreate(CreateView):
+    # Указываем нашу разработанную форму
+    form_class = ProductForm
+    # модель товаров
+    model = Product
+    # и новый шаблон, в котором используется форма.
+    template_name = 'product_edit.html'
 
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/products/')
+
+# Добавляем представление для изменения товара.
+class ProductUpdate(UpdateView):
+    form_class = ProductForm
+    model = Product
+    template_name = 'product_edit.html'
 
 
-    return render(request, 'product_edit.html', {'form': form})
+# Представление удаляющее товар.
+class ProductDelete(DeleteView):
+    model = Product
+    template_name = 'product_delete.html'
+    # Куда перенаправить пользователя после удаления
+    success_url = reverse_lazy('product_list')
